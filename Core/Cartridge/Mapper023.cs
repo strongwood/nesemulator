@@ -267,7 +267,7 @@ namespace NESEmulator.Core.Cartridge
             }
         }
 
-        public byte[] GetSRAM()
+        public byte[]? GetSRAM()
         {
             return HasBatteryBackedSRAM ? sram : null;
         }

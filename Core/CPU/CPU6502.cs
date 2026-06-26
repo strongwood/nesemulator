@@ -64,6 +64,7 @@ namespace NESEmulator.Core.CPU
             stallCycles = 0;
             nmiPending = false;
             irqPending = false;
+            cycleAccumulator = 0;
         }
 
         public int ExecuteInstruction()

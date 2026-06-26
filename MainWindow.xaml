@@ -65,7 +65,7 @@
                         Width="150"
                         Minimum="85"
                         Maximum="115"
-                        Value="99.5"
+                        Value="100"
                         SmallChange="0.1"
                         LargeChange="2.5"
                         TickFrequency="1"
@@ -73,7 +73,7 @@
                         ValueChanged="EmulationSpeedSlider_ValueChanged"/>
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock x:Name="SpeedText" Text="99.5%"/>
+                <TextBlock x:Name="SpeedText" Text="100.0%"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock x:Name="FPSText" Text="FPS: 0"/>

@@ -328,7 +328,6 @@ namespace NESEmulator.Core.Testing
             int frameCount = 0;
             int maxDetailFrames = 60;
             bool sprite0HitDetected = false;
-            bool loggedOAM = false;
             int lastTestNum = -1;
             int lastPC = -1;
             int samePCCount = 0;

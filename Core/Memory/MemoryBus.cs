@@ -74,8 +74,6 @@ namespace NESEmulator.Core.Memory
                             // APU寄存器
                             return apu?.ReadRegister(address) ?? 0;
                     }
-
-                    break;
                 case < 0x6000:
                     // 扩展ROM区域 (0x4020-0x5FFF)
                     return cartridge?.ReadPRG(address) ?? 0;

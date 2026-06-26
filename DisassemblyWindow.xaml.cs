@@ -59,7 +59,7 @@ namespace NESEmulator
             };
         }
 
-        private void UpdateTimer_Tick(object sender, EventArgs e)
+        private void UpdateTimer_Tick(object? sender, EventArgs e)
         {
             if (isRunning && !isSingleStepping)
             {

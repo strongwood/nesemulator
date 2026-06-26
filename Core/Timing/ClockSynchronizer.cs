@@ -15,11 +15,6 @@ namespace NESEmulator.Core.Timing
         private long lastApuClock;
         private long frameStartTime;
         
-        // 累积的周期计数器（用于精确的时钟分频）
-        private double cpuCycleAccumulator;
-        private double ppuCycleAccumulator;
-        private double apuCycleAccumulator;
-        
         // NES标准时序常量
         private const int CPU_CYCLES_PER_FRAME = 29830; // NTSC: 1789773 / 60.0988
         private const int PPU_CYCLES_PER_FRAME = CPU_CYCLES_PER_FRAME * 3;
@@ -49,10 +44,6 @@ namespace NESEmulator.Core.Timing
             lastPpuClock = currentTime;
             lastApuClock = currentTime;
             frameStartTime = currentTime;
-            
-            cpuCycleAccumulator = 0;
-            ppuCycleAccumulator = 0;
-            apuCycleAccumulator = 0;
             
             totalCpuCycles = 0;
             totalPpuCycles = 0;

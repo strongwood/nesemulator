@@ -31,7 +31,7 @@ namespace NESEmulator
         private KeyboardMapping player1KeyboardMapping = KeyboardMapping.CreateDefault(0);
         private KeyboardMapping player2KeyboardMapping = KeyboardMapping.CreateDefault(1);
         private float masterVolume = 2.0f;
-        private double emulationSpeed = 0.995;
+        private double emulationSpeed = 1.0;
         private bool isUpdatingSpeedControls = false;
         private int displayUpdatePending = 0;
         private int skippedDisplayUpdates = 0;

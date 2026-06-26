@@ -11,7 +11,6 @@ namespace NESEmulator.Core.Testing
         private CPU6502 cpu;
         private PPU2C02 ppu;
         private MemoryBus memoryBus;
-        private ICartridge? cartridge;
         private StringBuilder log;
         private int passedTests;
         private int failedTests;
