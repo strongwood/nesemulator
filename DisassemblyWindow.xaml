@@ -1,0 +1,144 @@
+<Window x:Class="NESEmulator.DisassemblyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="NES Disassembler" Height="600" Width="800"
+        ResizeMode="CanResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- 工具栏 -->
+        <ToolBar Grid.Row="0">
+            <Button x:Name="StepButton" Content="Step" Click="StepButton_Click" Margin="5,0" Padding="5,2"/>
+            <Button x:Name="RunButton" Content="Run" Click="RunButton_Click" Margin="5,0" Padding="5,2"/>
+            <Button x:Name="PauseButton" Content="Pause" Click="PauseButton_Click" Margin="5,0" Padding="5,2"/>
+            <Separator/>
+            <Button x:Name="JumpToPCButton" Content="Jump to PC" Click="JumpToPCButton_Click" Margin="5,0" Padding="5,2"/>
+            <TextBox x:Name="AddressTextBox" Width="80" Margin="5,0" ToolTip="Enter address (hexadecimal)"/>
+            <Button x:Name="JumpToAddressButton" Content="Jump" Click="JumpToAddressButton_Click" Margin="5,0" Padding="5,2"/>
+        </ToolBar>
+        
+        <!-- 主内容区域 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="250"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- 反汇编代码列表 -->
+            <ListView x:Name="DisassemblyListView" Grid.Column="0" FontFamily="Consolas" FontSize="14" 
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Address" Width="80" DisplayMemberBinding="{Binding Address, StringFormat={}${0:X4}}"/>
+                        <GridViewColumn Header="Bytes" Width="100" DisplayMemberBinding="{Binding BytesHex}"/>
+                        <GridViewColumn Header="Instruction" Width="200" DisplayMemberBinding="{Binding Instruction}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            
+            <!-- 分隔线 -->
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+            
+            <!-- CPU状态面板 -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- 寄存器状态 -->
+                <GroupBox Header="Registers" Grid.Row="0" Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="A:" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="RegisterA" Text="$00" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="X:" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" x:Name="RegisterX" Text="$00" Margin="5" FontFamily="Consolas"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Y:" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="RegisterY" Text="$00" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="SP:" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="3" x:Name="RegisterSP" Text="$00" Margin="5" FontFamily="Consolas"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="PC:" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegisterPC" Text="$0000" Margin="5" FontFamily="Consolas"/>
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="P:" Margin="5" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegisterP" Text="$00 (NV-BDIZC)" Margin="5" FontFamily="Consolas"/>
+                    </Grid>
+                </GroupBox>
+                
+                <!-- 标志位状态 -->
+                <GroupBox Header="Flags" Grid.Row="1" Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <CheckBox Grid.Row="0" Grid.Column="0" x:Name="FlagN" Content="N" IsEnabled="False" Margin="5"/>
+                        <CheckBox Grid.Row="0" Grid.Column="1" x:Name="FlagV" Content="V" IsEnabled="False" Margin="5"/>
+                        <CheckBox Grid.Row="0" Grid.Column="2" x:Name="FlagB" Content="B" IsEnabled="False" Margin="5"/>
+                        <CheckBox Grid.Row="0" Grid.Column="3" x:Name="FlagD" Content="D" IsEnabled="False" Margin="5"/>
+                        
+                        <CheckBox Grid.Row="1" Grid.Column="0" x:Name="FlagI" Content="I" IsEnabled="False" Margin="5"/>
+                        <CheckBox Grid.Row="1" Grid.Column="1" x:Name="FlagZ" Content="Z" IsEnabled="False" Margin="5"/>
+                        <CheckBox Grid.Row="1" Grid.Column="2" x:Name="FlagC" Content="C" IsEnabled="False" Margin="5"/>
+                    </Grid>
+                </GroupBox>
+                
+                <!-- 内存查看器 -->
+                <GroupBox Header="Memory Viewer" Grid.Row="2" Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <TextBlock Text="Address:" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox x:Name="MemoryAddressTextBox" Width="80" Margin="5,5,0,5"/>
+                            <Button x:Name="ViewMemoryButton" Content="View" Click="ViewMemoryButton_Click" Margin="5" Padding="5,2"/>
+                        </StackPanel>
+                        
+                        <TextBox Grid.Row="1" x:Name="MemoryViewerTextBox" IsReadOnly="True" 
+                                 FontFamily="Consolas" FontSize="12" Margin="5"
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </Grid>
+        
+        <!-- 状态栏 -->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Ready"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

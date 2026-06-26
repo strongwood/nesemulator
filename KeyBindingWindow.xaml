@@ -1,0 +1,81 @@
+<Window x:Class="NESEmulator.KeyBindingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="按键设置"
+        Height="420"
+        Width="380"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="InstructionText"
+                   Grid.Row="0"
+                   Margin="0,0,0,12"
+                   Text="设置玩家1的方向键和功能键。点击“修改”后按下新的按键。"
+                   TextWrapping="Wrap"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="上"/>
+            <TextBox x:Name="UpKeyTextBox" Grid.Row="0" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="0" Grid.Column="2" Padding="12,4" Tag="Up" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="下"/>
+            <TextBox x:Name="DownKeyTextBox" Grid.Row="1" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="1" Grid.Column="2" Padding="12,4" Tag="Down" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="左"/>
+            <TextBox x:Name="LeftKeyTextBox" Grid.Row="2" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="2" Grid.Column="2" Padding="12,4" Tag="Left" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="右"/>
+            <TextBox x:Name="RightKeyTextBox" Grid.Row="3" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="3" Grid.Column="2" Padding="12,4" Tag="Right" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="A 键"/>
+            <TextBox x:Name="AKeyTextBox" Grid.Row="4" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="4" Grid.Column="2" Padding="12,4" Tag="A" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="B 键"/>
+            <TextBox x:Name="BKeyTextBox" Grid.Row="5" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="5" Grid.Column="2" Padding="12,4" Tag="B" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="Select"/>
+            <TextBox x:Name="SelectKeyTextBox" Grid.Row="6" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="6" Grid.Column="2" Padding="12,4" Tag="Select" Click="ChangeBinding_Click">修改</Button>
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Margin="0,6" VerticalAlignment="Center" Text="Start"/>
+            <TextBox x:Name="StartKeyTextBox" Grid.Row="7" Grid.Column="1" Margin="0,4,8,4" IsReadOnly="True"/>
+            <Button Grid.Row="7" Grid.Column="2" Padding="12,4" Tag="Start" Click="ChangeBinding_Click">修改</Button>
+        </Grid>
+
+        <StackPanel Grid.Row="2"
+                    Margin="0,12,0,0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Margin="0,0,8,0" Padding="14,6" Click="ResetDefault_Click">恢复默认</Button>
+            <Button Margin="0,0,8,0" Padding="14,6" Click="Confirm_Click">确定</Button>
+            <Button Padding="14,6" Click="Cancel_Click">取消</Button>
+        </StackPanel>
+    </Grid>
+</Window>
