@@ -29,8 +29,8 @@
                 <MenuItem Header="重置" Click="Reset_Click"/>
             </MenuItem>
             <MenuItem Header="设置">
-                <MenuItem Header="玩家1按键设置" Click="OpenPlayer1KeyBindingWindow_Click"/>
-                <MenuItem Header="玩家2按键设置" Click="OpenPlayer2KeyBindingWindow_Click"/>
+                <MenuItem Header="玩家1输入设置" Click="OpenPlayer1KeyBindingWindow_Click"/>
+                <MenuItem Header="玩家2输入设置" Click="OpenPlayer2KeyBindingWindow_Click"/>
                 <Separator/>
                 <MenuItem Header="速度 85%" Click="SetSpeed85_Click"/>
                 <MenuItem Header="速度 92.5%" Click="SetSpeed925_Click"/>

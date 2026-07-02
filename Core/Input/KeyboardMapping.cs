@@ -7,10 +7,12 @@ namespace NESEmulator.Core.Input
     public sealed class KeyboardMapping
     {
         private readonly Dictionary<ControllerButton, Key> bindings;
+        private readonly Dictionary<TurboButton, Key> turboBindings;
 
         public KeyboardMapping()
         {
             bindings = new Dictionary<ControllerButton, Key>();
+            turboBindings = new Dictionary<TurboButton, Key>();
         }
 
         public static KeyboardMapping CreateDefault(int playerIndex = 0)
@@ -52,24 +54,42 @@ namespace NESEmulator.Core.Input
             return bindings;
         }
 
+        public Key GetTurboKey(TurboButton button)
+        {
+            return turboBindings.TryGetValue(button, out Key key) ? key : Key.None;
+        }
+
         public void SetBinding(ControllerButton button, Key key)
         {
-            List<ControllerButton> duplicates = bindings
-                .Where(pair => pair.Key != button && pair.Value == key)
-                .Select(pair => pair.Key)
-                .ToList();
-
-            foreach (ControllerButton duplicate in duplicates)
-            {
-                bindings[duplicate] = Key.None;
-            }
+            ClearDuplicateKeyBindings(key, button, null);
 
             bindings[button] = key;
+        }
+
+        public void SetTurboBinding(TurboButton button, Key key)
+        {
+            ClearDuplicateKeyBindings(key, null, button);
+            turboBindings[button] = key;
         }
 
         public bool TryGetButton(Key key, out ControllerButton button)
         {
             foreach (KeyValuePair<ControllerButton, Key> pair in bindings)
+            {
+                if (pair.Value == key)
+                {
+                    button = pair.Key;
+                    return true;
+                }
+            }
+
+            button = default;
+            return false;
+        }
+
+        public bool TryGetTurboButton(Key key, out TurboButton button)
+        {
+            foreach (KeyValuePair<TurboButton, Key> pair in turboBindings)
             {
                 if (pair.Value == key)
                 {
@@ -90,6 +110,11 @@ namespace NESEmulator.Core.Input
                 clone.bindings[pair.Key] = pair.Value;
             }
 
+            foreach (KeyValuePair<TurboButton, Key> pair in turboBindings)
+            {
+                clone.turboBindings[pair.Key] = pair.Value;
+            }
+
             return clone;
         }
 
@@ -103,14 +128,20 @@ namespace NESEmulator.Core.Input
             try
             {
                 string json = File.ReadAllText(filePath);
-                Dictionary<string, string>? serialized = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                if (serialized == null)
+                SerializedKeyboardMapping? serialized = JsonSerializer.Deserialize<SerializedKeyboardMapping>(json);
+                if (serialized?.Bindings != null)
+                {
+                    return DeserializeStructuredMapping(serialized, playerIndex);
+                }
+
+                Dictionary<string, string>? legacySerialized = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (legacySerialized == null)
                 {
                     return CreateDefault(playerIndex);
                 }
 
                 var mapping = CreateDefault(playerIndex);
-                foreach (KeyValuePair<string, string> pair in serialized)
+                foreach (KeyValuePair<string, string> pair in legacySerialized)
                 {
                     if (!Enum.TryParse(pair.Key, out ControllerButton button))
                     {
@@ -145,12 +176,88 @@ namespace NESEmulator.Core.Input
                 pair => pair.Key.ToString(),
                 pair => pair.Value.ToString());
 
-            string json = JsonSerializer.Serialize(serialized, new JsonSerializerOptions
+            var turboSerialized = turboBindings.ToDictionary(
+                pair => pair.Key.ToString(),
+                pair => pair.Value.ToString());
+
+            var payload = new SerializedKeyboardMapping
+            {
+                Bindings = serialized,
+                TurboBindings = turboSerialized
+            };
+
+            string json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
             {
                 WriteIndented = true
             });
 
             File.WriteAllText(filePath, json);
+        }
+
+        private void ClearDuplicateKeyBindings(Key key, ControllerButton? exemptButton, TurboButton? exemptTurboButton)
+        {
+            List<ControllerButton> duplicateButtons = bindings
+                .Where(pair => pair.Value == key && pair.Key != exemptButton)
+                .Select(pair => pair.Key)
+                .ToList();
+
+            foreach (ControllerButton duplicate in duplicateButtons)
+            {
+                bindings[duplicate] = Key.None;
+            }
+
+            List<TurboButton> duplicateTurboButtons = turboBindings
+                .Where(pair => pair.Value == key && pair.Key != exemptTurboButton)
+                .Select(pair => pair.Key)
+                .ToList();
+
+            foreach (TurboButton duplicate in duplicateTurboButtons)
+            {
+                turboBindings[duplicate] = Key.None;
+            }
+        }
+
+        private static KeyboardMapping DeserializeStructuredMapping(SerializedKeyboardMapping serialized, int playerIndex)
+        {
+            var mapping = CreateDefault(playerIndex);
+
+            foreach (KeyValuePair<string, string> pair in serialized.Bindings ?? [])
+            {
+                if (!Enum.TryParse(pair.Key, out ControllerButton button))
+                {
+                    continue;
+                }
+
+                if (!Enum.TryParse(pair.Value, out Key key))
+                {
+                    continue;
+                }
+
+                mapping.bindings[button] = key;
+            }
+
+            foreach (KeyValuePair<string, string> pair in serialized.TurboBindings ?? [])
+            {
+                if (!Enum.TryParse(pair.Key, out TurboButton button))
+                {
+                    continue;
+                }
+
+                if (!Enum.TryParse(pair.Value, out Key key))
+                {
+                    continue;
+                }
+
+                mapping.turboBindings[button] = key;
+            }
+
+            return mapping;
+        }
+
+        private sealed class SerializedKeyboardMapping
+        {
+            public Dictionary<string, string>? Bindings { get; set; }
+            public Dictionary<string, string>? TurboBindings { get; set; }
         }
     }
 }
